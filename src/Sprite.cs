@@ -99,7 +99,7 @@ namespace ProjectileTK
 
 			// Activate shader & pass it our transformation matrix
 			// Setting a shader uniform activates the shader, so we don't need to activate it separately
-			RenderingServer.Instance.GetShader(shader).SetUniform(2, CalculateTransformationMatrix(), true);
+			RenderingServer.Instance.GetShader(shader).SetUniform(0, CalculateTransformationMatrix(), true);
 
 			// Activate texture
 			RenderingServer.Instance.UseTexture(texture);
