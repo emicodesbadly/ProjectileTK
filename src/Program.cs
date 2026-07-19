@@ -1,4 +1,7 @@
 ﻿using System;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 namespace ProjectileTK
 {
@@ -6,7 +9,13 @@ namespace ProjectileTK
 	{
 		private static void Main()
 		{
-			using (Window window = new(640, 360, "PTK WIndow"))
+			NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
+			{
+				ClientSize = new Vector2i(640, 360),
+				Title = "ProjectileTK Window"
+			};
+
+			using (Window window = new(GameWindowSettings.Default, nativeWindowSettings))
 			{
 				window.Run();
 			}

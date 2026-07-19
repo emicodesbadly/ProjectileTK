@@ -77,6 +77,7 @@ namespace ProjectileTK
 			GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 		}
 
+		// IDisposable implementation
 		private bool disposed = false;
 
 		protected virtual void Dispose(bool disposing)
@@ -101,6 +102,7 @@ namespace ProjectileTK
 			}
 		}
 
+		// MUST be called when the sprite is no longer needed!
 		public void Dispose()
 		{
 			Dispose(true);

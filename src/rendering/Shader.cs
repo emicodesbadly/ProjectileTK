@@ -93,7 +93,7 @@ namespace ProjectileTK.Rendering
 			}
 		}
 
-		// IDisposable Implementation
+		// IDisposable implementation
 		private bool disposed = false;
 
 		protected virtual void Dispose(bool disposing)
