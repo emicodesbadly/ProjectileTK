@@ -24,7 +24,7 @@ namespace ProjectileTK
 	
 		string shader, texture;
 
-		public Sprite(string name, Vector2 position, float rotation, string shader = "sprite-default", string texture = "missing.png")
+		private Sprite(string name, Vector2 position, float rotation, string shader = "sprite-default", string texture = "missing.png")
 			: base(name, position, rotation)
 		{
 			// Create & bind vertex buffer, & upload data to it
@@ -56,6 +56,14 @@ namespace ProjectileTK
 			// Add texture to rendering server if it doesn't exist already
 			this.texture = texture;
 			RenderingServer.Instance.TryAddTexture(texture);
+		}
+
+		public static Sprite CreateSprite(string name, Vector2 position, float rotation, string shader = "sprite-default", string texture = "missing.png")
+		{
+			Sprite sprite = new(name, position, rotation, shader, texture);
+			sprite.Init();
+
+			return sprite;
 		}
 
 		public void SetTexture(string texture)

@@ -29,10 +29,10 @@ namespace ProjectileTK
 
 			GL.ClearColor(clearColor);
 
-			sprite1 = new("sprite 1", ( 0.5f, 0.5f), 45f);
+			sprite1 = Sprite.CreateSprite("sprite 1", ( 0.5f, 0.5f), 45f);
 			sprite1.transform.scale = (1.0f, 1.5f);
 
-			sprite2 = new("sprite 2", (-0.5f, 0.0f),  0f);
+			sprite2 = Sprite.CreateSprite("sprite 2", (0.5f, 0.0f),  0f);
 			sprite2.transform.scale = (1.0f, 1.0f);
 		}
 
