@@ -163,7 +163,17 @@ namespace ProjectileTK.Rendering
 
 				shaders = null;
 
-				// TODO: Find out how to dispose of textures
+				// Dispose of textures
+				int i = 0;
+				int[] handles = [textures.Count];
+
+				foreach (KeyValuePair<string, Texture> texture in textures)
+				{
+					handles[i] = texture.Value.handle;
+					i++;
+				}
+
+				GL.DeleteTextures(handles.Length, handles);
 
 				textures = null;
 

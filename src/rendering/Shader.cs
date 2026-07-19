@@ -8,7 +8,7 @@ namespace ProjectileTK.Rendering
 {
 	public class Shader : IDisposable
 	{
-		readonly int handle;
+		public readonly int handle;
 		bool valid = true;
 
 		public readonly string name;
@@ -102,6 +102,8 @@ namespace ProjectileTK.Rendering
 			GL.UniformMatrix4(location, transpose, ref matrix);
 		}
 
+		#region Dispose
+
 		// IDisposable implementation
 		private bool disposed = false;
 
@@ -129,5 +131,7 @@ namespace ProjectileTK.Rendering
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
+		#endregion
 	}
 }

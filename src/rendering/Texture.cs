@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
@@ -6,10 +7,14 @@ namespace ProjectileTK.Rendering
 {
 	public class Texture
 	{
-		readonly int handle;
+		public readonly int handle;
+
+		public readonly string name;
 
 		public Texture(string name)
 		{
+			this.name = name;
+
 			// Assemble path to image
 			string path = "resources/textures/" + name;
 
@@ -62,6 +67,5 @@ namespace ProjectileTK.Rendering
 			GL.ActiveTexture(unit);
 			GL.BindTexture(TextureTarget.Texture2D, handle);
 		}
-
 	}
 }
