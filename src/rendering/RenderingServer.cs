@@ -9,8 +9,8 @@ namespace ProjectileTK.Rendering
 	{
 		private RenderingServer()
 		{
-			shaders  = new Dictionary<string, Shader>();
-			textures = new Dictionary<string, Texture>();
+			shaders  = [];
+			textures = [];
 		}
 
 		// Lazy singleton implementation (NOT THREAD-SAFE!!!)
@@ -19,6 +19,8 @@ namespace ProjectileTK.Rendering
 
 		private Dictionary<string, Shader> shaders;
 		private Dictionary<string, Texture> textures;
+
+		#region Shaders
 
 		// Add shader if it doesn't exist already, or throw a warning
 		public void AddShader(string shader)
@@ -59,21 +61,35 @@ namespace ProjectileTK.Rendering
 			}
 		}
 
-		// Add shader if it doesn't exist, and immediately activate it
-		public void AddAndUseShader(string shader)
+		// Activate shader if it exists, return true on success
+		public bool TryUseShader(string shader)
 		{
-			if (!shaders.ContainsKey(shader))
+			bool success = shaders.TryGetValue(shader, out Shader s);
+			if (success)
 			{
-				shaders.Add(shader, new Shader(shader));
+				s.Use();
 			}
 
-			shaders[shader].Use();
+			return success;
 		}
 
+		// Get shader by name, without checking if it exists
 		public Shader GetShader(string shader)
 		{
 			return shaders[shader];
 		}
+
+		// Returns true if shader exists & sets s equal to the shader
+		// Otherwise returns false and sets s to null
+		public bool TryGetShader(string shader, out Shader s)
+		{
+			bool success = shaders.TryGetValue(shader, out s);
+			return success;
+		}
+
+		#endregion
+
+		#region Textures
 
 		// Add texture if it doesn't exist already, or throw a warning
 		public void AddTexture(string texture)
@@ -114,16 +130,23 @@ namespace ProjectileTK.Rendering
 			}
 		}
 
-		// Add texture if it doesn't exist already, and activate it immediately
-		public void AddAndUseTexture(string texture, TextureUnit unit = TextureUnit.Texture0)
+		// Get texture by name, without checking if it exists
+		public Texture GetTexture(string texture)
 		{
-			if (!textures.ContainsKey(texture))
-			{
-				textures.Add(texture, new Texture(texture));
-			}
-
-			textures[texture].Use(unit);
+			return textures[texture];
 		}
+
+		// Returns true if texture exists & sets t equal to the shader
+		// Otherwise returns false and sets t to null
+		public bool TryGetTexture(string texture, out Texture t)
+		{
+			bool success = textures.TryGetValue(texture, out t);
+			return success;
+		}
+
+		#endregion
+
+		#region Dispose
 
 		// IDisposable implementation
 		private bool disposed = false;
@@ -132,7 +155,17 @@ namespace ProjectileTK.Rendering
 		{
 			if (!disposed)
 			{
-				// TODO: free GPU resources
+				// Dispose of shaders
+				foreach (KeyValuePair<string, Shader> shader in shaders)
+				{
+					shader.Value.Dispose();
+				}
+
+				shaders = null;
+
+				// TODO: Find out how to dispose of textures
+
+				textures = null;
 
 				disposed = true;
 			}
@@ -146,10 +179,13 @@ namespace ProjectileTK.Rendering
 			}
 		}
 
+		// MUST be called when the sprite is no longer needed!
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
+		#endregion
 	}
 }
