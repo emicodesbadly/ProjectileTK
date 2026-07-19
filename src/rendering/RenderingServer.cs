@@ -70,6 +70,11 @@ namespace ProjectileTK.Rendering
 			shaders[shader].Use();
 		}
 
+		public Shader GetShader(string shader)
+		{
+			return shaders[shader];
+		}
+
 		// Add texture if it doesn't exist already, or throw a warning
 		public void AddTexture(string texture)
 		{

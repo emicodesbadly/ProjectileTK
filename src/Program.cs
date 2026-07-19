@@ -11,7 +11,7 @@ namespace ProjectileTK
 		{
 			NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
 			{
-				ClientSize = new Vector2i(640, 360),
+				ClientSize = new Vector2i(640, 640),
 				Title = "ProjectileTK Window"
 			};
 

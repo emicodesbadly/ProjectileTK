@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using ProjectileTK.Utilities;
 
 namespace ProjectileTK.Rendering
@@ -91,6 +92,14 @@ namespace ProjectileTK.Rendering
 			{
 				Utils.ThrowWarning($"Shader exists, but is invalid! ({name})");
 			}
+		}
+
+		// Set shader uniform of type Matrix4
+		// OpenTK uses row-major, while GLSL uses column-major, so usually we must transpose the matrix to correct for this
+		public void SetUniform(int location, Matrix4 matrix, bool transpose = true)
+		{
+			GL.UseProgram(handle);
+			GL.UniformMatrix4(location, transpose, ref matrix);
 		}
 
 		// IDisposable implementation

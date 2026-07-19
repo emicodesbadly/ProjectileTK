@@ -24,7 +24,7 @@ namespace ProjectileTK
 	
 		string shader, texture;
 
-		public Sprite(string name, Vector2 position, float rotation, string shader = "shader", string texture = "missing.png")
+		public Sprite(string name, Vector2 position, float rotation, string shader = "sprite-default", string texture = "missing.png")
 			: base(name, position, rotation)
 		{
 			// Create & bind vertex buffer, & upload data to it
@@ -69,9 +69,26 @@ namespace ProjectileTK
 			// Bind vertex array
 			GL.BindVertexArray(VAO);
 
-			// Activate shader & texture
+			// Calculate transformation matrix
+
+			// We start with the identity matrix, which applies no transformation
+			Matrix4 transformation = Matrix4.Identity;
+
+			// First we scale our sprite
+			transformation = transformation * Matrix4.CreateScale(transform.scale.X, transform.scale.Y, 1.0f);
+
+			// Then we rotate it
+			transformation = transformation * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(transform.rotation));
+
+			// Lastly we move it
+			transformation = transformation * Matrix4.CreateTranslation(transform.position.X, transform.position.Y, 0.0f);
+
+			// Activate shader & pass it our transformation matrix
+			// Setting a shader uniform activates the shader, so we don't need to activate it separately
+			RenderingServer.Instance.GetShader(shader).SetUniform(2, transformation, true);
+
+			// Activate texture
 			RenderingServer.Instance.UseTexture(texture);
-			RenderingServer.Instance.UseShader(shader);
 
 			// Draw elements
 			GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);

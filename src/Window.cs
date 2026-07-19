@@ -1,3 +1,4 @@
+using System;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -11,7 +12,7 @@ namespace ProjectileTK
 	{
 		public static Color4 clearColor = new(0.0f, 0.0f, 1.0f, 1.0f);	// Window background color
 
-		Sprite sprite;
+		Sprite sprite1, sprite2;
 
 		public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
 			: base(gameWindowSettings, nativeWindowSettings)
@@ -24,15 +25,23 @@ namespace ProjectileTK
 		{
 			base.OnLoad();
 
+			// Console.WriteLine($"({Title}) Loading window...");
+
 			GL.ClearColor(clearColor);
 
-			sprite = new("sprite", Vector2.Zero, 0f);
+			sprite1 = new("sprite 1", ( 0.5f, 0.5f), 45f);
+			sprite1.transform.scale = (1.0f, 1.5f);
+
+			sprite2 = new("sprite 2", (-0.5f, 0.0f),  0f);
+			sprite2.transform.scale = (1.0f, 1.0f);
 		}
 
 		// Runs when the window is about to close
 		protected override void OnUnload()
 		{
 			base.OnUnload();
+
+			RenderingServer.Instance.Dispose();
 		}
 
 		// Runs when the window is resized
@@ -56,7 +65,8 @@ namespace ProjectileTK
 
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 
-			sprite.Render();
+			sprite1.Render();
+			sprite2.Render();
 
 			SwapBuffers();
 		}
