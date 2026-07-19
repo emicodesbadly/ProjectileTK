@@ -7,18 +7,18 @@ namespace ProjectileTK
 {
 	public class Sprite : GameObject, IRenderer
 	{
-		float[] vertices = {
+		float[] vertices = [
 		//	 X       Y      UV(X) UV(Y)
 			 0.25f,  0.25f, 1.0f, 1.0f,
 			 0.25f, -0.25f, 1.0f, 0.0f,
 			-0.25f, -0.25f, 0.0f, 0.0f,
 			-0.25f,  0.25f, 0.0f, 1.0f
-		};
+		];
 
-		uint[] indices = {
+		uint[] indices = [
 			0, 1, 2, // bottom trianlge
 			2, 3, 0  // top triangle
-		};
+		];
 
 		int VBO, VAO, EBO;
 	
@@ -72,28 +72,34 @@ namespace ProjectileTK
 			RenderingServer.Instance.TryAddTexture(texture);
 		}
 
+		#region Rendering
+
+		// Calculate transformation matrix
+		public Matrix4 CalculateTransformationMatrix()
+		{
+			// We start with the identity matrix, which applies no transformation
+			Matrix4 transformation = Matrix4.Identity;
+
+			// First we scale our sprite
+			transformation *= Matrix4.CreateScale(transform.scale.X, transform.scale.Y, 1.0f);
+
+			// Then we rotate it
+			transformation *= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(transform.rotation));
+
+			// Lastly we move it
+			transformation *= Matrix4.CreateTranslation(transform.position.X, transform.position.Y, 0.0f);
+
+			return transformation;
+		}
+
 		public void Render()
 		{
 			// Bind vertex array
 			GL.BindVertexArray(VAO);
 
-			// Calculate transformation matrix
-
-			// We start with the identity matrix, which applies no transformation
-			Matrix4 transformation = Matrix4.Identity;
-
-			// First we scale our sprite
-			transformation = transformation * Matrix4.CreateScale(transform.scale.X, transform.scale.Y, 1.0f);
-
-			// Then we rotate it
-			transformation = transformation * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(transform.rotation));
-
-			// Lastly we move it
-			transformation = transformation * Matrix4.CreateTranslation(transform.position.X, transform.position.Y, 0.0f);
-
 			// Activate shader & pass it our transformation matrix
 			// Setting a shader uniform activates the shader, so we don't need to activate it separately
-			RenderingServer.Instance.GetShader(shader).SetUniform(2, transformation, true);
+			RenderingServer.Instance.GetShader(shader).SetUniform(2, CalculateTransformationMatrix(), true);
 
 			// Activate texture
 			RenderingServer.Instance.UseTexture(texture);
@@ -101,6 +107,10 @@ namespace ProjectileTK
 			// Draw elements
 			GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 		}
+
+		#endregion
+
+		#region  Dispose
 
 		// IDisposable implementation
 		private bool disposed = false;
@@ -133,5 +143,7 @@ namespace ProjectileTK
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
+		#endregion
 	}
 }

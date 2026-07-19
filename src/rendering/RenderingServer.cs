@@ -14,7 +14,7 @@ namespace ProjectileTK.Rendering
 		}
 
 		// Lazy singleton implementation (NOT THREAD-SAFE!!!)
-		private static readonly Lazy<RenderingServer> instance = new Lazy<RenderingServer>(() => new RenderingServer());
+		private static readonly Lazy<RenderingServer> instance = new(() => new RenderingServer());
 		public static RenderingServer Instance => instance.Value;
 
 		private Dictionary<string, Shader> shaders;
