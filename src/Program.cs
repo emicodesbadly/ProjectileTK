@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PTK
+namespace ProjectileTK
 {
 	internal static class Program
 	{

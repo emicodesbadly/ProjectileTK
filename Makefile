@@ -3,6 +3,8 @@ PUB = bin/publish
 
 build:
 	@mkdir -p $(BIN)
+	@rm -rf ./$(BIN)/resources
+	@cp -R ./resources ./$(BIN)
 	dotnet build --output $(BIN)
 	@echo --------------------------------
 
@@ -11,6 +13,8 @@ run:
 
 test:
 	@mkdir -p $(BIN)
+	@rm -rf ./$(BIN)/resources
+	@cp -R ./resources ./$(BIN)
 	dotnet build --output $(BIN)
 	@echo --------------------------------
 	@dotnet ./$(BIN)/ptk.dll
