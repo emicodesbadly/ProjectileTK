@@ -25,6 +25,18 @@ namespace ProjectileTK
 
 			// Console.WriteLine($"({Title}) Loading window...");
 
+			RenderingServer.Instance.NewShader("sprite-default");
+			RenderingServer.Instance.NewTexture("missing", ".png");
+			RenderingServer.Instance.NewSprite("missing", "sprite-default", "missing");
+
+			for (int i = 0; i < 10; i++)
+			{
+				SpriteInstance.CreateSpriteInstance(
+					"missing",
+					0.5f * new Vector2((float)MathHelper.Sin(MathHelper.TwoPi * i / 10f), (float)MathHelper.Cos(MathHelper.TwoPi * i / 10f)),
+					360f * i / 10f);
+			}
+
 			GL.ClearColor(clearColor);
 		}
 
@@ -56,6 +68,9 @@ namespace ProjectileTK
 			base.OnRenderFrame(e);
 
 			GL.Clear(ClearBufferMask.ColorBufferBit);
+
+			// Render all sprite instances
+			RenderingServer.Instance.RenderAllSprites();
 
 			SwapBuffers();
 		}

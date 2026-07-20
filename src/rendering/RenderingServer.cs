@@ -18,6 +18,7 @@ namespace ProjectileTK.Rendering
 		private static readonly Lazy<RenderingServer> instance = new(() => new RenderingServer());
 		public static RenderingServer Instance => instance.Value;
 
+		// GPU Resources
 		private Dictionary<string, Shader> shaders;
 		private Dictionary<string, Texture> textures;
 		private Dictionary<string, Sprite> sprites;
@@ -138,6 +139,14 @@ namespace ProjectileTK.Rendering
 			return true;
 		}
 
+		public void RenderAllSprites()
+		{
+			foreach (KeyValuePair<string, Sprite> sprite in sprites)
+			{
+				sprite.Value.Render();
+			}
+		}
+
 		#endregion
 
 		#region Dispose
@@ -170,6 +179,9 @@ namespace ProjectileTK.Rendering
 				GL.DeleteTextures(handles.Length, handles);
 
 				textures = null;
+
+				// Dispose of sprites
+				sprites = null;
 
 				disposed = true;
 			}

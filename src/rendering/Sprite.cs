@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace ProjectileTK.Rendering
 {
@@ -35,7 +37,7 @@ namespace ProjectileTK.Rendering
             // Create & bind vertex buffer, & upload data to it
 			VBO = GL.GenBuffer();
 			GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
-			GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+			GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
             // Create & bind vertex array, & set vertex attributes
 			VAO = GL.GenVertexArray();
@@ -55,18 +57,23 @@ namespace ProjectileTK.Rendering
 
             // Set up the transform vertex attribute
             // It is a mat4, so it takes 4 locations
+
+            // Column 0
             GL.VertexAttribPointer(2, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 0);
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribDivisor(2, 1);
 
+            // Column 1
             GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 4 * sizeof(float));
             GL.EnableVertexAttribArray(3);
             GL.VertexAttribDivisor(3, 1);
 
+            // Column 2
             GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 8 * sizeof(float));
             GL.EnableVertexAttribArray(4);
             GL.VertexAttribDivisor(4, 1);
 
+            // Column 3
             GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, 16 * sizeof(float), 12 * sizeof(float));
             GL.EnableVertexAttribArray(5);
             GL.VertexAttribDivisor(5, 1);
@@ -79,17 +86,61 @@ namespace ProjectileTK.Rendering
 
         public void Render()
         {
-            float[] instanceData = [32];
+            // If this sprite has not been instantiated, skip
+            if (!SpriteInstance.allInstances.TryGetValue(id, out List<SpriteInstance> instances) || instances.Count <= 0)
+            {
+                return;
+            }
 
+            // Gather instance data
+            float[] instanceData = new float[16 * instances.Count];
+            for (int i = 0; i < instances.Count; i++)
+            {
+                // Get instance transformation matrix
+                Matrix4 transform = instances[i].CalculateTransformationMatrix();
+
+                // Column 0
+                instanceData[16 * i + 0] = transform.Column0.X;
+                instanceData[16 * i + 1] = transform.Column0.Y;
+                instanceData[16 * i + 2] = transform.Column0.Z;
+                instanceData[16 * i + 3] = transform.Column0.W;
+
+                // Column 1
+                instanceData[16 * i + 4] = transform.Column1.X;
+                instanceData[16 * i + 5] = transform.Column1.Y;
+                instanceData[16 * i + 6] = transform.Column1.Z;
+                instanceData[16 * i + 7] = transform.Column1.W;
+
+                // Column 2
+                instanceData[16 * i +  8] = transform.Column2.X;
+                instanceData[16 * i +  9] = transform.Column2.Y;
+                instanceData[16 * i + 10] = transform.Column2.Z;
+                instanceData[16 * i + 11] = transform.Column2.W;
+
+                // Column 3
+                instanceData[16 * i + 12] = transform.Column3.X;
+                instanceData[16 * i + 13] = transform.Column3.Y;
+                instanceData[16 * i + 14] = transform.Column3.Z;
+                instanceData[16 * i + 15] = transform.Column3.W;
+            }
+
+            // Bind instance data buffer & upload instance data to it
             GL.BindBuffer(BufferTarget.ArrayBuffer, instVBO);
             GL.BufferData(BufferTarget.ArrayBuffer, instanceData.Length * sizeof(float), instanceData, BufferUsageHint.StreamDraw);
 
+            // Bind VAO
             GL.BindVertexArray(VAO);
 
+            // Activate shader & texture
             RenderingServer.Instance.UseShader(shader);
             RenderingServer.Instance.UseTexture(texture);
 
-            GL.DrawElementsInstanced(PrimitiveType.Triangles, 2, DrawElementsType.UnsignedInt, 0, 2);
+            // Draw sprite instances
+            GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0, instances.Count);
+
+            // Unbind buffers & arrays
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindVertexArray(0);
         }
 
         #region  Dispose
@@ -101,7 +152,13 @@ namespace ProjectileTK.Rendering
 		{
 			if (!disposed)
 			{
-				
+                // Unbind & delete VBO, instance VBO & EBO
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                GL.DeleteBuffers(3, [VBO, instVBO, EBO]);
+
+				// Unbind & delete vertex array
+                GL.BindVertexArray(0);
+                GL.DeleteVertexArray(VAO);
 
 				disposed = true;
 			}
@@ -111,7 +168,7 @@ namespace ProjectileTK.Rendering
 		{
 			if (!disposed)
 			{
-				//throw new Exception($"(SpriteObject: {name}) GPU Resource leak! Did you forget to call Dispose()?");
+				throw new Exception($"(Sprite: {id}) GPU Resource leak! Did you forget to call Dispose()?");
 			}
 		}
 

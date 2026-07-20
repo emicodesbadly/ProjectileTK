@@ -3,8 +3,6 @@ layout(location = 0) in vec2 a_pos;
 layout(location = 1) in vec2 a_uv;
 layout(location = 2) in mat4 a_trans;
 
-layout(location = 0) uniform mat4 transform;
-
 out vec2 v_uv;
 
 void main()

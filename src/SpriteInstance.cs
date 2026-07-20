@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using ProjectileTK.Rendering;
@@ -8,22 +9,35 @@ namespace ProjectileTK
 {
 	public class SpriteInstance : GameObject
 	{
+		public static readonly Dictionary<string, List<SpriteInstance>> allInstances = [];
+
+		private string spriteBaseID;
+
 		private SpriteInstance(Sprite spriteBase, Vector2 position, float rotation)
 			: base(spriteBase.id + " (instance)", position, rotation)
 		{
-
+			this.spriteBaseID = spriteBase.id;
 		}
 
-		public static SpriteInstance CreateSprite(string spriteBase, Vector2 position, float rotation)
+		public static SpriteInstance CreateSpriteInstance(string spriteBaseID, Vector2 position, float rotation)
 		{
-			if (RenderingServer.Instance.GetSprite(spriteBase, out Sprite sprite))
+			if (!RenderingServer.Instance.GetSprite(spriteBaseID, out Sprite sprite))
 			{
-				Utils.ThrowWarning("SpriteInstance", $"SpriteInstance creation failed! No Sprite with id \"{spriteBase}\" exists!");
+				Utils.ThrowWarning("SpriteInstance", $"SpriteInstance creation failed! No Sprite with id \"{spriteBaseID}\" exists!");
 
 				return null;
 			}
 
 			SpriteInstance instance = new(sprite, position, rotation);
+
+			if (!allInstances.TryGetValue(spriteBaseID, out List<SpriteInstance> l))
+			{
+				allInstances.Add(spriteBaseID, []);
+				l = allInstances[spriteBaseID];
+			}
+
+			l.Add(instance);
+
 			instance.Init();
 
 			return instance;
