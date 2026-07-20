@@ -11,6 +11,7 @@ namespace ProjectileTK.Rendering
 		{
 			shaders  = [];
 			textures = [];
+			sprites  = [];
 		}
 
 		// Lazy singleton implementation (NOT THREAD-SAFE!!!)
@@ -19,129 +20,122 @@ namespace ProjectileTK.Rendering
 
 		private Dictionary<string, Shader> shaders;
 		private Dictionary<string, Texture> textures;
+		private Dictionary<string, Sprite> sprites;
 
 		#region Shaders
 
-		// Add shader if it doesn't exist already, or throw a warning
-		public void AddShader(string shader)
+		public bool NewShader(string name)
 		{
-			if (shaders.ContainsKey(shader))
+			if (shaders.ContainsKey(name))
 			{
-				Utils.ThrowWarning($"Shader already exists! (name: {shader})");
+				Utils.ThrowWarning(this, $"A shader with name \"{name}\" already exists!");
 
-				return;
-			}
-
-			shaders.Add(shader, new Shader(shader));
-		}
-
-		// Try to add shader, return true on success, false on failure
-		public bool TryAddShader(string shader)
-		{
-			if (shaders.ContainsKey(shader))
-			{
 				return false;
 			}
 
-			shaders.Add(shader, new Shader(shader));
+			shaders.Add(name, new Shader(name));
 
 			return true;
 		}
 
-		// Activate shader for rendering, or throw a warning if it doesn't exist
-		public void UseShader(string shader)
+		public bool GetShader(string name, out Shader shader)
 		{
-			if (shaders.TryGetValue(shader, out Shader s))
+			if (!shaders.TryGetValue(name, out shader))
 			{
-				s.Use();
-			}
-			else
-			{
-				Utils.ThrowWarning($"Shader not found! (name: {shader}");
-			}
-		}
+				Utils.ThrowWarning(this, $"No shader with name \"{name}\" exists!");
 
-		// Activate shader if it exists, return true on success
-		public bool TryUseShader(string shader)
-		{
-			bool success = shaders.TryGetValue(shader, out Shader s);
-			if (success)
-			{
-				s.Use();
+				return false;
 			}
 
-			return success;
+			return true;
 		}
 
-		// Get shader by name, without checking if it exists
-		public Shader GetShader(string shader)
+		public bool UseShader(string name)
 		{
-			return shaders[shader];
-		}
+			if (!shaders.TryGetValue(name, out Shader shader))
+			{
+				Utils.ThrowWarning(this, $"No shader with name \"{name}\" exists!");
 
-		// Returns true if shader exists & sets s equal to the shader
-		// Otherwise returns false and sets s to null
-		public bool TryGetShader(string shader, out Shader s)
-		{
-			bool success = shaders.TryGetValue(shader, out s);
-			return success;
+				return false;
+			}
+
+			shader.Use();
+
+			return true;
 		}
 
 		#endregion
 
 		#region Textures
-
-		// Add texture if it doesn't exist already, or throw a warning
-		public void AddTexture(string texture)
+		
+		public bool NewTexture(string name, string fileExtension = ".png")
 		{
-			if (textures.ContainsKey(texture))
+			if (textures.ContainsKey(name))
 			{
-				Utils.ThrowWarning($"Texture already exists! (name: {texture})");
+				Utils.ThrowWarning(this, $"A texture with name \"{name}\" already exists!");
 
-				return;
-			}
-
-			textures.Add(texture, new Texture(texture));
-		}
-
-		// Try to add texture, return true on success, false on failure
-		public bool TryAddTexture(string texture)
-		{
-			if (textures.ContainsKey(texture))
-			{
 				return false;
 			}
 
-			textures.Add(texture, new Texture(texture));
+			textures.Add(name, new Texture(name, fileExtension));
 
 			return true;
 		}
 
-		// Activate texture for rendering, or throw a warning if it doesn't exist
-		public void UseTexture(string texture, TextureUnit unit = TextureUnit.Texture0)
+		public bool GetTexture(string name, out Texture texture)
 		{
-			if (textures.TryGetValue(texture, out Texture t))
+			if (!textures.TryGetValue(name, out texture))
 			{
-				t.Use(unit);
+				Utils.ThrowWarning(this, $"No texture with name \"{name}\" exists!");
+
+				return false;
 			}
-			else
-			{
-				Utils.ThrowWarning($"Texture not found! (name: {texture}");
-			}
+
+			return true;
 		}
 
-		// Get texture by name, without checking if it exists
-		public Texture GetTexture(string texture)
+		public bool UseTexture(string name, TextureUnit unit = TextureUnit.Texture0)
 		{
-			return textures[texture];
+			if (!textures.TryGetValue(name, out Texture texture))
+			{
+				Utils.ThrowWarning(this, $"No texture with name \"{name}\" exists!");
+
+				return false;
+			}
+
+			texture.Use(unit);
+
+			return true;
 		}
 
-		// Returns true if texture exists & sets t equal to the shader
-		// Otherwise returns false and sets t to null
-		public bool TryGetTexture(string texture, out Texture t)
+		#endregion
+
+		#region Sprites
+
+		public bool NewSprite(string id, string shader, string texture)
 		{
-			bool success = textures.TryGetValue(texture, out t);
-			return success;
+			if (string.IsNullOrEmpty(id) || sprites.ContainsKey(id))
+			{
+				Utils.ThrowWarning(this, $"A sprite with id \"{id}\" already exists!");
+
+				return false;
+			}
+
+			sprites.Add(id, new Sprite(id, shader, texture));
+
+			return true;
+		}
+
+		public bool GetSprite(string id, out Sprite sprite)
+		{
+			if (!sprites.TryGetValue(id, out sprite))
+			{
+				Utils.ThrowWarning(this, $"No sprite with id \"{id}\" exists!");
+
+				return false;
+			}
+
+			return true;
 		}
 
 		#endregion

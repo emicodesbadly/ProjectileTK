@@ -90,7 +90,7 @@ namespace ProjectileTK.Rendering
 			}
 			else
 			{
-				Utils.ThrowWarning($"Shader exists, but is invalid! ({name})");
+				Utils.ThrowWarning(this, $"Shader exists, but is invalid! ({name})");
 			}
 		}
 

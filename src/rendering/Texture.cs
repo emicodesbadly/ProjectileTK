@@ -11,12 +11,12 @@ namespace ProjectileTK.Rendering
 
 		public readonly string name;
 
-		public Texture(string name)
+		public Texture(string name, string fileExtension)
 		{
 			this.name = name;
 
 			// Assemble path to image
-			string path = "resources/textures/" + name;
+			string path = "resources/textures/" + name + fileExtension;
 
 			// Generate handle
 			handle = GL.GenTexture();

@@ -12,8 +12,6 @@ namespace ProjectileTK
 	{
 		public static Color4 clearColor = new(0.0f, 0.0f, 1.0f, 1.0f);	// Window background color
 
-		Sprite sprite1, sprite2;
-
 		public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
 			: base(gameWindowSettings, nativeWindowSettings)
 		{
@@ -28,12 +26,6 @@ namespace ProjectileTK
 			// Console.WriteLine($"({Title}) Loading window...");
 
 			GL.ClearColor(clearColor);
-
-			sprite1 = Sprite.CreateSprite("sprite 1", ( 0.5f, 0.5f), 45f);
-			sprite1.transform.scale = (1.0f, 1.5f);
-
-			sprite2 = Sprite.CreateSprite("sprite 2", (0.5f, 0.0f),  0f);
-			sprite2.transform.scale = (1.0f, 1.0f);
 		}
 
 		// Runs when the window is about to close
@@ -64,9 +56,6 @@ namespace ProjectileTK
 			base.OnRenderFrame(e);
 
 			GL.Clear(ClearBufferMask.ColorBufferBit);
-
-			sprite1.Render();
-			sprite2.Render();
 
 			SwapBuffers();
 		}
