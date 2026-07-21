@@ -7,13 +7,19 @@ namespace ProjectileTK
 	{
 		private static void Main()
 		{
-			NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
+			GameWindowSettings gameWindowSettings = new GameWindowSettings()
 			{
-				ClientSize = new Vector2i(640, 640),
-				Title = "ProjectileTK Window"
+				UpdateFrequency = 60d,
 			};
 
-            using Window window = new(GameWindowSettings.Default, nativeWindowSettings);
+			NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
+			{
+				Title = "ProjectileTK Window",
+				ClientSize = new Vector2i(640, 640),
+				// AspectRatio = (1, 1),
+			};
+
+            using Window window = new(gameWindowSettings, nativeWindowSettings);
             window.Run();
         }
 	}

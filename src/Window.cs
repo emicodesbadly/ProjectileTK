@@ -2,6 +2,7 @@ using System;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using ProjectileTK.Rendering;
 
@@ -10,7 +11,7 @@ namespace ProjectileTK
 	public class Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
 		: GameWindow(gameWindowSettings, nativeWindowSettings)
 	{
-		private static Color4 clearColor = new(0.0f, 0.0f, 1.0f, 1.0f);  // Window background color
+		private static Color4 clearColor = new(0.65f, 0.43f, 0.71f, 1.0f);  // Window background color
 		public static Color4 ClearColor => clearColor;
 
         // Runs immediately after Run() is called
@@ -35,8 +36,11 @@ namespace ProjectileTK
 			RenderingServer.Instance.NewSprite("missing-green", 253, "sprite-default", "missing-green");
 			RenderingServer.Instance.NewSprite("missing-blue", 252, "sprite-default", "missing-blue");
 
+			// Debug Squares
+			int amount = 16;
+
 			int q = -1;
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < amount; i++)
 			{
 				if (i % 4 == 0) q = i;
 
@@ -47,10 +51,12 @@ namespace ProjectileTK
 				else if ((i - q) % 4 == 2) sp = "missing-green";
 				else if ((i - q) % 4 == 3) sp = "missing-blue";
 
-				SpriteInstance.CreateSpriteInstance(
+				SpriteInstance instance = SpriteInstance.CreateSpriteInstance(
 					sp,
-					0.75f * new Vector2((float)MathHelper.Sin(MathHelper.TwoPi * i / 16f), (float)MathHelper.Cos(MathHelper.TwoPi * i / 16f)),
-					-360f * i / 16f);
+					0.75f * new Vector2((float)MathHelper.Sin(MathHelper.TwoPi * (float)i / amount), (float)MathHelper.Cos(MathHelper.TwoPi * (float)i / amount)),
+					-360f * (float)i / amount);
+
+				instance.transform.scale = (1f - i / (float)(amount + 1), 1f - i / (float)(amount + 1));
 			}
 
 			GL.ClearColor(clearColor);
@@ -76,6 +82,11 @@ namespace ProjectileTK
 		protected override void OnUpdateFrame(FrameEventArgs e)
 		{
 			base.OnUpdateFrame(e);
+
+			if (IsKeyPressed(Keys.T))
+			{
+				Console.WriteLine(e.Time.ToString("#.#####"));
+			}
 		}
 
 		// Runs when the window is ready to render, AFTER OnUpdateFrame()
