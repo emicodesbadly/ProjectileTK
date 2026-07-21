@@ -36,5 +36,10 @@ namespace ProjectileTK
 		{
 			// Console.WriteLine($"({name}) Init");
 		}
+
+		protected virtual void Update()
+		{
+			
+		}
 	}
 }

@@ -2,39 +2,55 @@ using System;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using ProjectileTK.Rendering;
 
 namespace ProjectileTK
 {
-	public class Window : GameWindow
+	public class Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+		: GameWindow(gameWindowSettings, nativeWindowSettings)
 	{
-		public static Color4 clearColor = new(0.0f, 0.0f, 1.0f, 1.0f);	// Window background color
+		private static Color4 clearColor = new(0.0f, 0.0f, 1.0f, 1.0f);  // Window background color
+		public static Color4 ClearColor => clearColor;
 
-		public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
-			: base(gameWindowSettings, nativeWindowSettings)
-		{
-
-		}
-
-		// Runs immediately after Run() is called
-		protected override void OnLoad()
+        // Runs immediately after Run() is called
+        protected override void OnLoad()
 		{
 			base.OnLoad();
 
 			// Console.WriteLine($"({Title}) Loading window...");
 
+			// CREATE SHADERS HERE
 			RenderingServer.Instance.NewShader("sprite-default");
-			RenderingServer.Instance.NewTexture("missing", ".png");
-			RenderingServer.Instance.NewSprite("missing", "sprite-default", "missing");
 
-			for (int i = 0; i < 10; i++)
+			// CREATE TEXTURES HERE
+			RenderingServer.Instance.NewTexture("missing", ".png");
+			RenderingServer.Instance.NewTexture("missing-red", ".png");
+			RenderingServer.Instance.NewTexture("missing-green", ".png");
+			RenderingServer.Instance.NewTexture("missing-blue", ".png");
+
+			// CREATE SPRITES HERE
+			RenderingServer.Instance.NewSprite("missing", 255, "sprite-default", "missing");
+			RenderingServer.Instance.NewSprite("missing-red", 254, "sprite-default", "missing-red");
+			RenderingServer.Instance.NewSprite("missing-green", 253, "sprite-default", "missing-green");
+			RenderingServer.Instance.NewSprite("missing-blue", 252, "sprite-default", "missing-blue");
+
+			int q = -1;
+			for (int i = 0; i < 16; i++)
 			{
+				if (i % 4 == 0) q = i;
+
+				string sp = "missing";
+
+				if		((i - q) % 4 == 0) sp = "missing";
+				else if ((i - q) % 4 == 1) sp = "missing-red";
+				else if ((i - q) % 4 == 2) sp = "missing-green";
+				else if ((i - q) % 4 == 3) sp = "missing-blue";
+
 				SpriteInstance.CreateSpriteInstance(
-					"missing",
-					0.5f * new Vector2((float)MathHelper.Sin(MathHelper.TwoPi * i / 10f), (float)MathHelper.Cos(MathHelper.TwoPi * i / 10f)),
-					360f * i / 10f);
+					sp,
+					0.75f * new Vector2((float)MathHelper.Sin(MathHelper.TwoPi * i / 16f), (float)MathHelper.Cos(MathHelper.TwoPi * i / 16f)),
+					-360f * i / 16f);
 			}
 
 			GL.ClearColor(clearColor);
@@ -73,6 +89,12 @@ namespace ProjectileTK
 			RenderingServer.Instance.RenderAllSprites();
 
 			SwapBuffers();
+		}
+	
+		// Sets window background color
+		public static void SetClearColor(Color4 color)
+		{
+			clearColor = color;
 		}
 	}
 }

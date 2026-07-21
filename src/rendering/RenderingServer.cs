@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using ProjectileTK.Utilities;
 
+using SortedList = System.Collections.SortedList;
+
 namespace ProjectileTK.Rendering
 {
 	public sealed class RenderingServer : IDisposable
@@ -12,6 +14,8 @@ namespace ProjectileTK.Rendering
 			shaders  = [];
 			textures = [];
 			sprites  = [];
+
+			spriteRenderingOrder = new(new SpritePriorityComparer());
 		}
 
 		// Lazy singleton implementation (NOT THREAD-SAFE!!!)
@@ -22,6 +26,7 @@ namespace ProjectileTK.Rendering
 		private Dictionary<string, Shader> shaders;
 		private Dictionary<string, Texture> textures;
 		private Dictionary<string, Sprite> sprites;
+		private SortedSet<Sprite> spriteRenderingOrder;
 
 		#region Shaders
 
@@ -113,7 +118,7 @@ namespace ProjectileTK.Rendering
 
 		#region Sprites
 
-		public bool NewSprite(string id, string shader, string texture)
+		public bool NewSprite(string id, byte priority, string shader, string texture)
 		{
 			if (string.IsNullOrEmpty(id) || sprites.ContainsKey(id))
 			{
@@ -122,7 +127,9 @@ namespace ProjectileTK.Rendering
 				return false;
 			}
 
-			sprites.Add(id, new Sprite(id, shader, texture));
+			Sprite newSprite = new Sprite(id, priority, shader, texture);
+			sprites.Add(id, newSprite);
+			spriteRenderingOrder.Add(newSprite);
 
 			return true;
 		}
@@ -141,9 +148,10 @@ namespace ProjectileTK.Rendering
 
 		public void RenderAllSprites()
 		{
-			foreach (KeyValuePair<string, Sprite> sprite in sprites)
+			// Render all sprites, from low to high priority
+			foreach (Sprite sprite in spriteRenderingOrder)
 			{
-				sprite.Value.Render();
+				sprite.Render();
 			}
 		}
 
@@ -168,7 +176,7 @@ namespace ProjectileTK.Rendering
 
 				// Dispose of textures
 				int i = 0;
-				int[] handles = [textures.Count];
+				int[] handles = new int[textures.Count];
 
 				foreach (KeyValuePair<string, Texture> texture in textures)
 				{
@@ -181,7 +189,13 @@ namespace ProjectileTK.Rendering
 				textures = null;
 
 				// Dispose of sprites
+				foreach (KeyValuePair<string, Sprite> sprite in sprites)
+				{
+					sprite.Value.Dispose();
+				}
+
 				sprites = null;
+				spriteRenderingOrder = null;
 
 				disposed = true;
 			}
