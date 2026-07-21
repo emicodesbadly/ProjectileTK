@@ -24,15 +24,20 @@ namespace ProjectileTK.Rendering
 
         public readonly string shader, texture;
 
+        // Sprites with low priority are rendered behind sprites with high priority
+        public readonly byte priority;
+
         int VBO, VAO, EBO;
         int instVBO;
 
-        public Sprite(string id, string shader = "sprite-default", string texture = "missing.png")
+        public Sprite(string id, byte priority, string shader = "sprite-default", string texture = "missing.png")
         {
             this.id = id;
 
             this.shader  = shader;
             this.texture = texture;
+
+            this.priority = priority;
 
             // Create & bind vertex buffer, & upload data to it
 			VBO = GL.GenBuffer();
@@ -180,5 +185,26 @@ namespace ProjectileTK.Rendering
 		}
 
 		#endregion
+    }
+
+    public class SpritePriorityComparer : Comparer<Sprite>
+    {
+        public override int Compare(Sprite x, Sprite y)
+        {
+            if (x == null && y != null)
+            {
+                return -1;
+            }
+            else if (x != null && y == null)
+            {
+                return 1;
+            }
+            else if (x == null && y == null)
+            {
+                return 0;
+            }
+
+            return x.priority.CompareTo(y.priority);
+        }
     }
 }

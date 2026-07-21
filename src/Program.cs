@@ -1,6 +1,4 @@
-﻿using System;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 
 namespace ProjectileTK
@@ -15,10 +13,8 @@ namespace ProjectileTK
 				Title = "ProjectileTK Window"
 			};
 
-			using (Window window = new(GameWindowSettings.Default, nativeWindowSettings))
-			{
-				window.Run();
-			}
-		}
+            using Window window = new(GameWindowSettings.Default, nativeWindowSettings);
+            window.Run();
+        }
 	}
 }
