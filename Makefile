@@ -14,6 +14,7 @@ build:
 	@cp -R ./resources ./$(BIN)
 	dotnet build --output $(BIN)
 	@echo $(SEPARATOR)
+	@echo $(SEPARATOR)
 
 run:
 	@dotnet ./$(BIN)/ptk.dll
@@ -23,6 +24,7 @@ test:
 	@rm -rf ./$(BIN)/resources
 	@cp -R ./resources ./$(BIN)
 	dotnet build --output $(BIN)
+	@echo $(SEPARATOR)
 	@echo $(SEPARATOR)
 	@dotnet ./$(BIN)/ptk.dll
 
@@ -34,6 +36,9 @@ publish:
 
 clean:
 	@rm -rf ./$(BIN)
+
+purge:
+	@rm -rf ./bin
 
 purge:
 	@rm -rf ./bin
