@@ -9,7 +9,7 @@ namespace ProjectileTK.Rendering
 	public class Shader : IDisposable
 	{
 		public readonly int handle;
-		bool valid = true;
+        readonly bool valid = true;
 
 		public readonly string name;
 
@@ -31,13 +31,12 @@ namespace ProjectileTK.Rendering
 			frag = GL.CreateShader(ShaderType.FragmentShader);
 			GL.ShaderSource(frag, fragSource);
 
-			// Deposit compilation success status here
-			int success;
+            // Deposit compilation success status here
 
-			// Compile vertex shader & check for errors
-			GL.CompileShader(vert);
+            // Compile vertex shader & check for errors
+            GL.CompileShader(vert);
 
-			GL.GetShader(vert, ShaderParameter.CompileStatus, out success);
+            GL.GetShader(vert, ShaderParameter.CompileStatus, out int success);
 			if (success == 0)
 			{
 				valid = false;
@@ -121,7 +120,7 @@ namespace ProjectileTK.Rendering
 		{
 			if (!disposed)
 			{
-				throw new Exception($"(Shader: {name}) GPU Resource leak! Did you forget to call Dispose()?");
+				Utils.ThrowError(this, "GPU Resource leak! Did you forget to call Dispose()?");
 			}
 		}
 

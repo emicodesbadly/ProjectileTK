@@ -3,12 +3,23 @@ using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using ProjectileTK.Utilities;
 
-using SortedList = System.Collections.SortedList;
-
 namespace ProjectileTK.Rendering
 {
 	public sealed class RenderingServer : IDisposable
 	{
+		// Lazy singleton implementation (NOT THREAD-SAFE!!!)
+		private static readonly Lazy<RenderingServer> instance = new(() => new RenderingServer());
+		public static RenderingServer Instance => instance.Value;
+
+		// GPU Resources
+		private Screen screen;
+		public Screen Screen => screen;
+
+		private Dictionary<string, Shader> shaders;
+		private Dictionary<string, Texture> textures;
+		private Dictionary<string, Sprite> sprites;
+		private SortedSet<Sprite> spriteRenderingOrder;
+
 		private RenderingServer()
 		{
 			shaders  = [];
@@ -18,15 +29,10 @@ namespace ProjectileTK.Rendering
 			spriteRenderingOrder = new(new SpritePriorityComparer());
 		}
 
-		// Lazy singleton implementation (NOT THREAD-SAFE!!!)
-		private static readonly Lazy<RenderingServer> instance = new(() => new RenderingServer());
-		public static RenderingServer Instance => instance.Value;
-
-		// GPU Resources
-		private Dictionary<string, Shader> shaders;
-		private Dictionary<string, Texture> textures;
-		private Dictionary<string, Sprite> sprites;
-		private SortedSet<Sprite> spriteRenderingOrder;
+		public void CreateScreen(Window window, (int width, int height) targetResolution)
+		{
+			screen = new Screen(window, targetResolution);
+		}
 
 		#region Shaders
 
@@ -196,6 +202,9 @@ namespace ProjectileTK.Rendering
 
 				sprites = null;
 				spriteRenderingOrder = null;
+
+				// Dispose of the screen
+				screen.Dispose();
 
 				disposed = true;
 			}

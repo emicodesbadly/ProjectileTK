@@ -11,9 +11,6 @@ namespace ProjectileTK
 	public class Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
 		: GameWindow(gameWindowSettings, nativeWindowSettings)
 	{
-		private static Color4 clearColor = new(0.65f, 0.43f, 0.71f, 1.0f);  // Window background color
-		public static Color4 ClearColor => clearColor;
-
         // Runs immediately after Run() is called
         protected override void OnLoad()
 		{
@@ -22,6 +19,7 @@ namespace ProjectileTK
 			// Console.WriteLine($"({Title}) Loading window...");
 
 			// CREATE SHADERS HERE
+			RenderingServer.Instance.NewShader("screen");
 			RenderingServer.Instance.NewShader("sprite-default");
 
 			// CREATE TEXTURES HERE
@@ -35,6 +33,9 @@ namespace ProjectileTK
 			RenderingServer.Instance.NewSprite("missing-red", 254, "sprite-default", "missing-red");
 			RenderingServer.Instance.NewSprite("missing-green", 253, "sprite-default", "missing-green");
 			RenderingServer.Instance.NewSprite("missing-blue", 252, "sprite-default", "missing-blue");
+
+			// Create screen
+			RenderingServer.Instance.CreateScreen(this, (1920, 1080));
 
 			// Debug Squares
 			int amount = 16;
@@ -58,8 +59,6 @@ namespace ProjectileTK
 
 				instance.transform.scale = (1f - i / (float)(amount + 1), 1f - i / (float)(amount + 1));
 			}
-
-			GL.ClearColor(clearColor);
 		}
 
 		// Runs when the window is about to close
@@ -76,6 +75,8 @@ namespace ProjectileTK
 			base.OnFramebufferResize(e);
 
 			GL.Viewport(0, 0, e.Width, e.Height);
+
+			RenderingServer.Instance.Screen.OnWindowResized((e.Width, e.Height));
 		}
 
 		// Runs every frame, BEFORE rendering
@@ -94,18 +95,15 @@ namespace ProjectileTK
 		{
 			base.OnRenderFrame(e);
 
-			GL.Clear(ClearBufferMask.ColorBufferBit);
+			RenderingServer.Instance.Screen.BindFBO();
 
 			// Render all sprite instances
 			RenderingServer.Instance.RenderAllSprites();
 
+			// Render the screen
+			RenderingServer.Instance.Screen.Render();
+
 			SwapBuffers();
-		}
-	
-		// Sets window background color
-		public static void SetClearColor(Color4 color)
-		{
-			clearColor = color;
 		}
 	}
 }

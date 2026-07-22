@@ -19,5 +19,12 @@ namespace ProjectileTK.Utilities
 			Console.WriteLine(message);
 			Console.ResetColor();
 		}
+
+		public static void ThrowError(object sender, string message)
+		{
+			Console.Write($"({sender}) ");
+			//Console.ForegroundColor = ConsoleColor.Red;
+			throw new Exception("\x1B[38;2;255;0;0m" + message + "\x1B[0m");
+		}
 	}
 }

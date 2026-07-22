@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using ProjectileTK.Utilities;
 
 namespace ProjectileTK.Rendering
 {
@@ -30,7 +31,7 @@ namespace ProjectileTK.Rendering
         int VBO, VAO, EBO;
         int instVBO;
 
-        public Sprite(string id, byte priority, string shader = "sprite-default", string texture = "missing.png")
+        public Sprite(string id, byte priority, string shader = "sprite-default", string texture = "missing")
         {
             this.id = id;
 
@@ -173,7 +174,7 @@ namespace ProjectileTK.Rendering
 		{
 			if (!disposed)
 			{
-				throw new Exception($"(Sprite: {id}) GPU Resource leak! Did you forget to call Dispose()?");
+				Utils.ThrowError(this, "GPU Resource leak! Did you forget to call Dispose()?");
 			}
 		}
 
