@@ -18,6 +18,8 @@ namespace ProjectileTK
 
 			// Console.WriteLine($"({Title}) Loading window...");
 
+			GL.Disable(EnableCap.DepthTest);
+
 			// CREATE SHADERS HERE
 			RenderingServer.Instance.NewShader("screen");
 			RenderingServer.Instance.NewShader("sprite-default");

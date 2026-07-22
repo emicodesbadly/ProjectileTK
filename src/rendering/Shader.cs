@@ -95,7 +95,7 @@ namespace ProjectileTK.Rendering
 
 		// Set shader uniform of type Matrix4
 		// OpenTK uses row-major, while GLSL uses column-major, so usually we must transpose the matrix to correct for this
-		public void SetUniform(int location, Matrix4 matrix, bool transpose = true)
+		public void SetMatrix4(int location, Matrix4 matrix, bool transpose = true)
 		{
 			GL.UseProgram(handle);
 			GL.UniformMatrix4(location, transpose, ref matrix);

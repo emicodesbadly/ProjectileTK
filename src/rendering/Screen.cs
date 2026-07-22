@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using ProjectileTK.Utilities;
+using StbImageSharp;
 
 namespace ProjectileTK.Rendering
 {
@@ -47,6 +49,11 @@ namespace ProjectileTK.Rendering
 			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, resolution.width, resolution.height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+            // Wrapping determines how the texture should behave when given UV coordinates outside the [0,1] range
+			// S is the X axis, T is the Y axis
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
 			// Attach the render texture
 			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, FBO, 0);
@@ -150,7 +157,7 @@ namespace ProjectileTK.Rendering
             // Bind default frame buffer
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-            GL.ClearColor(Color4.Green);
+            GL.ClearColor(Color4.Blue);
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // Bind VAO
