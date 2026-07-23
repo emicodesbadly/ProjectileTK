@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using ProjectileTK.Utilities;
-using StbImageSharp;
 
 namespace ProjectileTK.Rendering
 {

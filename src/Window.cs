@@ -61,6 +61,8 @@ namespace ProjectileTK
 
 				instance.transform.scale = (1f - i / (float)(amount + 1), 1f - i / (float)(amount + 1));
 			}
+
+			//SpriteInstance.CreateSpriteInstance("missing", (1, 1), 45f);
 		}
 
 		// Runs when the window is about to close
@@ -89,6 +91,18 @@ namespace ProjectileTK
 			if (IsKeyPressed(Keys.T))
 			{
 				Console.WriteLine(e.Time.ToString("#.#####"));
+			}
+
+			if (IsKeyPressed(Keys.F))
+			{
+				if (WindowState == WindowState.Fullscreen)
+				{
+					WindowState = WindowState.Normal;
+				}
+				else
+				{
+					WindowState = WindowState.Fullscreen;
+				}
 			}
 		}
 
