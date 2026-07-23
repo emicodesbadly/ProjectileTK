@@ -46,17 +46,17 @@ namespace ProjectileTK
 		// Calculate transformation matrix
 		public Matrix4 CalculateTransformationMatrix()
 		{
-			// We start with the identity matrix, which applies no transformation
-			Matrix4 transformation = Matrix4.Identity;
+			// We start with the rotation
+			Matrix4 transformation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(transform.rotation));
 
-			// First we scale our sprite
+			// Then we scale our sprite
 			transformation *= Matrix4.CreateScale(transform.scale.X, transform.scale.Y, 1.0f);
 
-			// Then we rotate it
-			transformation *= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(transform.rotation));
-
-			// Lastly we move it
+			// Then we move it
 			transformation *= Matrix4.CreateTranslation(transform.position.X, transform.position.Y, 0.0f);
+
+			// Lastly we apply the world-to-screen matrix
+			transformation *= RenderingServer.Instance.Screen.WorldToScreenMatrix;
 
 			return transformation;
 		}

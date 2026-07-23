@@ -102,6 +102,16 @@ namespace ProjectileTK
 					WindowState = WindowState.Fullscreen;
 				}
 			}
+
+			if (IsKeyPressed(Keys.Up))
+			{
+				RenderingServer.Instance.Screen.SetSize(RenderingServer.Instance.Screen.Size + 1f);
+			}
+
+			if (IsKeyPressed(Keys.Down))
+			{
+				RenderingServer.Instance.Screen.SetSize(RenderingServer.Instance.Screen.Size - 1f);
+			}
 		}
 
 		// Runs when the window is ready to render, AFTER OnUpdateFrame()

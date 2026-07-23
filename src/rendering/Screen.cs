@@ -32,11 +32,24 @@ namespace ProjectileTK.Rendering
 
         public float AspectRatio => (float)resolution.width / (float)resolution.height;
 
-        public Screen(Window window, (int width, int height) resolution)
+        // Distance from the center to the top of the screen, in world units
+        private float size;
+        public float Size => size;
+
+        private Matrix4 wts;
+        public Matrix4 WorldToScreenMatrix => wts;
+
+        public Screen(Window window, (int width, int height) resolution, float size = 1f)
         {
             // Set window & screen aspect ratio
             this.window = window;
             this.resolution = resolution;
+
+            // Set screen size
+            this.size = size;
+
+            // Set world-to-screen matrix
+            wts = CalculateWorldToScreen();
 
             // Create & bind frame buffer
 			FBO = GL.GenFramebuffer();
@@ -143,6 +156,31 @@ namespace ProjectileTK.Rendering
 			GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        private Matrix4 CalculateWorldToScreen()
+        {
+            return new Matrix4
+			(
+				(1f / (size * AspectRatio), 0.0f, 0.0f, 0.0f),
+				(0.0f, 1f / size, 0.0f, 0.0f),
+				(0.0f, 0.0f, 1.0f, 0.0f),
+				(0.0f, 0.0f, 0.0f, 1.0f)
+			);
+        }
+
+        public void SetSize(float size)
+        {
+            if (size <= 0f)
+            {
+                Utils.ThrowWarning(this, "Screen size must be greater than 0!");
+
+                return;
+            }
+
+            this.size = size;
+
+            wts = CalculateWorldToScreen();
         }
 
         public void BindFBO()

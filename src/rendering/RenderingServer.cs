@@ -50,7 +50,7 @@ namespace ProjectileTK.Rendering
 			return true;
 		}
 
-		public bool GetShader(string name, out Shader shader)
+		public bool UseAndGetShader(string name, out Shader shader)
 		{
 			if (!shaders.TryGetValue(name, out shader))
 			{
