@@ -61,8 +61,6 @@ namespace ProjectileTK
 
 				instance.transform.scale = (1f - i / (float)(amount + 1), 1f - i / (float)(amount + 1));
 			}
-
-			//SpriteInstance.CreateSpriteInstance("missing", (1, 1), 45f);
 		}
 
 		// Runs when the window is about to close

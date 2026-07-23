@@ -88,6 +88,10 @@ namespace ProjectileTK.Rendering
 			EBO = GL.GenBuffer();
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
 			GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+
+            // Unbind buffers
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindVertexArray(0);
         }
 
         public void Render()

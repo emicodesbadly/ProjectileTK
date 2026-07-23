@@ -27,14 +27,16 @@ namespace ProjectileTK.Rendering
 
         private readonly Window window;
 
-        private float aspectRatio;
-        public float AspectRatio => aspectRatio;
+        private (int width, int height) resolution;
+        public (int width, int height) Resolution => resolution;
+
+        public float AspectRatio => (float)resolution.width / (float)resolution.height;
 
         public Screen(Window window, (int width, int height) resolution)
         {
             // Set window & screen aspect ratio
             this.window = window;
-            aspectRatio = (float)resolution.width / (float)resolution.height;
+            this.resolution = resolution;
 
             // Create & bind frame buffer
 			FBO = GL.GenFramebuffer();
@@ -93,34 +95,34 @@ namespace ProjectileTK.Rendering
         {
             float windowAspect = (float)windowResolution.width / (float)windowResolution.height;
 
-            if (windowAspect > aspectRatio)
+            if (windowAspect > AspectRatio)
             {
-                vertices[0]  =  (1 / windowAspect) * aspectRatio;
+                vertices[0]  =  (1 / windowAspect) * AspectRatio;
                 vertices[1]  =  1.0f;
 
-                vertices[4]  =  (1 / windowAspect) * aspectRatio;
+                vertices[4]  =  (1 / windowAspect) * AspectRatio;
                 vertices[5]  = -1.0f;
 
-                vertices[8]  = -(1 / windowAspect) * aspectRatio;
+                vertices[8]  = -(1 / windowAspect) * AspectRatio;
                 vertices[9]  = -1.0f;
 
-                vertices[12] = -(1 / windowAspect) * aspectRatio;
+                vertices[12] = -(1 / windowAspect) * AspectRatio;
                 vertices[13] =  1.0f;
 
             }
-            else if (windowAspect < aspectRatio)
+            else if (windowAspect < AspectRatio)
             {
                 vertices[0]  =  1.0f; 
-                vertices[1]  =  1 / aspectRatio * windowAspect;
+                vertices[1]  =  1 / AspectRatio * windowAspect;
 
                 vertices[4]  =  1.0f;
-                vertices[5]  = -1 / aspectRatio * windowAspect;
+                vertices[5]  = -1 / AspectRatio * windowAspect;
 
                 vertices[8]  = -1.0f;
-                vertices[9]  = -1 / aspectRatio * windowAspect;
+                vertices[9]  = -1 / AspectRatio * windowAspect;
 
                 vertices[12] = -1.0f;
-                vertices[13] =  1 / aspectRatio * windowAspect;
+                vertices[13] =  1 / AspectRatio * windowAspect;
             }
             else
             {
@@ -139,12 +141,17 @@ namespace ProjectileTK.Rendering
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
 			GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
         public void BindFBO()
         {
             // Bind FBO
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+
+            // Change viewport to match
+            GL.Viewport(0, 0, resolution.width, resolution.height);
 
             GL.ClearColor(Color4.HotPink);
             GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -155,7 +162,10 @@ namespace ProjectileTK.Rendering
             // Bind default frame buffer
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-            GL.ClearColor(Color4.Blue);
+            // Change viewport to match
+            GL.Viewport(0, 0, window.ClientSize.X, window.ClientSize.Y);
+
+            GL.ClearColor(Color4.Black);
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // Bind VAO
@@ -169,6 +179,9 @@ namespace ProjectileTK.Rendering
 
             // Draw screen
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+
+            // Unbind VAO
+            GL.BindVertexArray(0);
         }
 
         #region  Dispose
