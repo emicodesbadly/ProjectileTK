@@ -16,6 +16,7 @@ namespace ProjectileTK
 			{
 				Title = "ProjectileTK Window",
 				ClientSize = new Vector2i(640, 640),
+				//APIVersion = new System.Version(4, 1),
 				//AspectRatio = (1, 1),
 			};
 
