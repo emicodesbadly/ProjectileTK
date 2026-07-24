@@ -39,9 +39,9 @@ namespace ProjectileTK
 			// Create screen
 			RenderingServer.Instance.CreateScreen(this, (1920, 1080));
 
-			// Debug Squares
+			// DEBUG SPRITES
+			/*
 			int amount = 16;
-
 			int q = -1;
 			for (int i = 0; i < amount; i++)
 			{
@@ -61,6 +61,23 @@ namespace ProjectileTK
 
 				instance.transform.scale = (1f - i / (float)(amount + 1), 1f - i / (float)(amount + 1));
 			}
+			*/
+
+			/*
+			int num = 40000;
+			var rand = new Random();
+			Console.WriteLine(((float)rand.NextDouble() * 8f - 16f, (float)rand.NextDouble() * 10f - 5f));
+			Console.WriteLine((float)rand.NextDouble() * 360f);
+			for (int i = 0; i < num; i++)
+			{
+				SpriteInstance.CreateSpriteInstance
+				(
+					"missing",
+					((float)rand.NextDouble() * 3.2f - 1.6f, (float)rand.NextDouble() * 2f - 1f),
+					(float)rand.NextDouble() * 360f
+				);
+			}
+			*/
 		}
 
 		// Runs when the window is about to close
